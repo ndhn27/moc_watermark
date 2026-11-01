@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mộc — Image Watermarking Tool</title>
+<style>
+  :root {
+    --bg: #12151d;
+    --panel: #1a1f2b;
+    --panel-2: #212736;
+    --border: #2c3244;
+    --text: #e7e4db;
+    --text-dim: #8a90a3;
+    --accent: #cf9a4c;
+    --accent-strong: #e3b567;
+    --accent-dim: rgba(207, 154, 76, 0.16);
+    --good: #7cc48a;
+    --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--accent);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--accent-strong);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+
+  .eyebrow {
+    margin: 2px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-dim);
+  }
+
+  .count-pill {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+
+  .count-pill strong { color: var(--accent-strong); font-weight: 600; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .controls {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .field { display: flex; flex-direction: column; gap: 8px; }
+
+  .field-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  label {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.01em;
+  }
+
+  .value {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent-strong);
+  }
+
+  input[type="text"] {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--panel-2);
+    border-radius: 2px;
+    border: 1px solid var(--border);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+
+  .range-caption {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+  }
+
+  .swatches { display: flex; gap: 8px; }
+
+  .swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--swatch);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .swatch.active { border-color: var(--accent); }
+
+  .segmented {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .seg-btn {
+    flex: 1;
+    background: var(--panel-2);
+    color: var(--text-dim);
+    border: none;
+    padding: 9px 8px;
+    font-size: 11.5px;
+    font-family: var(--sans);
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+  }
+
+  .seg-btn:last-child { border-right: none; }
+
+  .seg-btn.active {
+    background: var(--accent-dim);
+    color: var(--accent-strong);
+  }
+
+  .primary-btn {
+    background: var(--accent);
+    color: #1a1305;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+
+  .primary-btn:disabled {
+    background: var(--panel-2);
+    color: var(--text-dim);
+    cursor: not-allowed;
+  }
+
+  .ghost-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .ghost-btn:disabled { color: var(--text-dim); cursor: not-allowed; }
+
+  .hint {
+    margin: 0;
+    font-size: 11.5px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+
+  .footnote {
+    margin: 4px 0 0;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .preview-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+  .preview-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    color: var(--accent-strong);
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: var(--mono);
+  }
+
+  /* Thumbnail rail (batch) */
+  .thumb-rail {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 2px 8px;
+  }
+
+  .thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--panel-2);
+  }
+
+  .thumb.active { border-color: var(--accent); }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .thumb-remove {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    line-height: 16px;
+    text-align: center;
+    background: rgba(18, 21, 29, 0.85);
+    color: var(--text);
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .thumb-add {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 6px;
+    border: 1px dashed var(--border);
+    background: none;
+    color: var(--text-dim);
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .thumb-add:hover { border-color: var(--accent); color: var(--accent-strong); }
+
+  .dropzone {
+    background: var(--panel);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    min-height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: border-color 0.15s ease;
+  }
+
+  .dropzone.drag-over { border-color: var(--accent); }
+
+  .dropzone-empty { text-align: center; }
+
+  .dropzone-empty p { margin: 0; color: var(--text-dim); font-size: 14px; }
+
+  .dropzone-empty .or {
+    margin: 10px 0;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .secondary-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .canvas-frame {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .corner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-color: var(--accent);
+    border-style: solid;
+    border-width: 0;
+    opacity: 0.85;
+  }
+
+  .corner.tl { top: -8px; left: -8px; border-top-width: 2px; border-left-width: 2px; }
+  .corner.tr { top: -8px; right: -8px; border-top-width: 2px; border-right-width: 2px; }
+  .corner.bl { bottom: -8px; left: -8px; border-bottom-width: 2px; border-left-width: 2px; }
+  .corner.br { bottom: -8px; right: -8px; border-bottom-width: 2px; border-right-width: 2px; }
+
+  #canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 68vh;
+    width: auto;
+    height: auto;
+    border-radius: 2px;
+  }
+
+  .meta-strip {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+
+  .meta-strip .dot { color: var(--border); }
+  .meta-strip span:not(.dot) { color: var(--text-dim); }
+  #meta-res, #meta-format { color: var(--accent-strong); }
+
+  .batch-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .batch-actions .primary-btn,
+  .batch-actions .ghost-btn { flex: 1; margin-top: 0; }
+
+  .progress-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    transition: width 0.12s ease;
+  }
+
+  .progress-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+  }
+  /* ---- Server mode (only ever shown when a wmapp server answers; see #wm-server) ---- */
+  input[type="number"], select {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 7px 9px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    min-width: 0;
+  }
+  input[type="number"]:focus, select:focus { outline: none; border-color: var(--accent); }
+  .srv-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text); font-size: 13px; }
+  .srv-tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent-strong); border: 1px solid var(--accent); border-radius: 3px; padding: 1px 5px;
+  }
+  #server-panel { border-top: 1px solid var(--border); padding-top: 14px; }
+  #srv-options { display: flex; flex-direction: column; gap: 8px; }
+  .srv-group {
+    margin: 8px 0 0; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-dim);
+  }
+  .srv-row { display: grid; grid-template-columns: 1fr 1.2fr; gap: 8px; align-items: center; }
+  .srv-row[hidden] { display: none; }
+  .srv-row label { text-transform: capitalize; }
+  .srv-row input[type="checkbox"] { justify-self: start; accent-color: var(--accent); }
+  .srv-notes { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .srv-notes li { font-size: 11px; line-height: 1.45; color: var(--text-dim); }
+  .srv-notes li.key { color: var(--accent-strong); font-family: var(--mono); }
+  .srv-notes li.error { color: #e07a6b; }
+  .swatches.locked { opacity: 0.4; pointer-events: none; }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">木</span>
+        <div>
+          <h1>Mộc</h1>
+          <p class="eyebrow">IMAGE WATERMARKING · RESOLUTION PRESERVED</p>
+        </div>
+      </div>
+      <span class="count-pill" id="count-pill" hidden><strong id="count-value">0</strong> image(s) loaded</span>
+    </header>
+
+    <main class="layout">
+      <aside class="controls">
+        <div class="field">
+          <label for="wm-text">Watermark text</label>
+          <input id="wm-text" type="text" value="@yourhandle" />
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <label for="wm-opacity">Opacity</label>
+            <span class="value" id="opacity-value">35%</span>
+          </div>
+          <input id="wm-opacity" type="range" min="5" max="100" value="35" />
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <label for="wm-spacing">Density</label>
+            <span class="value" id="spacing-value">220px</span>
+          </div>
+          <input id="wm-spacing" type="range" min="60" max="400" step="10" value="220" />
+          <div class="range-caption"><span>Dense</span><span>Sparse</span></div>
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <label for="wm-fontsize">Font size</label>
+            <span class="value" id="fontsize-value">34px</span>
+          </div>
+          <input id="wm-fontsize" type="range" min="14" max="120" value="34" />
+        </div>
+
+        <div class="field">
+          <div class="field-head">
+            <label for="wm-angle">Rotation angle</label>
+            <span class="value" id="angle-value">30°</span>
+          </div>
+          <input id="wm-angle" type="range" min="0" max="90" value="30" />
+        </div>
+
+        <div class="field">
+          <label>Watermark color</label>
+          <div class="swatches">
+            <button type="button" class="swatch active" data-color="#ffffff" style="--swatch:#ffffff"></button>
+            <button type="button" class="swatch" data-color="#000000" style="--swatch:#000000"></button>
+            <button type="button" class="swatch" data-color="#cf9a4c" style="--swatch:#cf9a4c"></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Export format</label>
+          <div class="segmented">
+            <button type="button" class="seg-btn active" data-format="png">PNG · lossless</button>
+            <button type="button" class="seg-btn" data-format="jpeg">JPEG · smaller size</button>
+          </div>
+        </div>
+
+        <div class="field" id="server-panel" hidden>
+          <label class="srv-toggle" for="srv-toggle">
+            <input type="checkbox" id="srv-toggle" />
+            Full pipeline <span class="srv-tag">server</span>
+          </label>
+          <p class="hint" id="srv-status">A local server is available. Turn this on for jitter, blend modes, invisible marks, metadata and C2PA.</p>
+          <div id="srv-options" hidden></div>
+          <button type="button" id="srv-preview-btn" class="ghost-btn" hidden>Render preview on server</button>
+          <ul class="srv-notes" id="srv-notes" hidden></ul>
+        </div>
+
+        <div class="batch-actions">
+          <button id="download-btn" class="primary-btn" disabled>Download this image</button>
+        </div>
+        <div class="batch-actions">
+          <button id="download-all-btn" class="ghost-btn" disabled>Download all as .zip</button>
+        </div>
+
+        <div id="progress-wrap" hidden>
+          <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          <p class="progress-label" id="progress-label">Processing…</p>
+        </div>
+
+        <p class="hint" id="download-hint">Choose one or more images to start</p>
+        <p class="footnote" id="footnote">Everything runs locally in your browser — images are never uploaded to any server. Same settings are applied to every loaded image.</p>
+      </aside>
+
+      <section class="preview-wrap">
+        <div class="preview-toolbar" id="preview-toolbar" hidden>
+          <div class="thumb-rail" id="thumb-rail"></div>
+        </div>
+        <div id="dropzone" class="dropzone">
+          <input id="file-input" type="file" accept="image/*" multiple hidden />
+          <div class="dropzone-empty" id="dropzone-empty">
+            <p>Drag one or more images here</p>
+            <p class="or">or</p>
+            <button type="button" id="browse-btn" class="secondary-btn">Choose image files</button>
+          </div>
+          <div class="canvas-frame" id="canvas-frame" hidden>
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+            <canvas id="canvas"></canvas>
+          </div>
+        </div>
+        <div class="meta-strip" id="meta-strip" hidden>
+          <span id="meta-res">—</span>
+          <span class="dot">·</span>
+          <span id="meta-format">—</span>
+          <span class="dot">·</span>
+          <span>1:1 · lossless</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script id="wm-server">
+/* WmServer - client for the wmapp HTTP API (cli/serve.py). No DOM in here: the page
+ * script below owns the UI, this owns "how to talk to the server", so it can be
+ * tested on its own (tests/js/wm-server.test.mjs) against a real server.
+ *
+ * The page works fully without any server (everything client-side, nothing uploaded).
+ * If detect() finds one, the page offers an opt-in "Full pipeline" mode that renders
+ * with the SAME code as the CLI and the Python API - jitter, blend modes, invisible
+ * marks, metadata, C2PA - and builds its extra controls from the server's /api/schema
+ * instead of hard-coding them, so a new option in wmapp/options.py appears here on its own. */
+(function (root) {
+  'use strict';
+
+  // The page has its own sliders for these; the schema's versions of them aren't rendered again.
+  const PAGE_COVERED = ['text', 'opacity', 'font_size', 'angle', 'spacing'];
+  // Not rendered: an explicit watermark ID names ONE file (the ledger refuses a repeat), which makes no
+  // sense for a page that stamps image after image with the same form values. API/CLI/Python only.
+  const NOT_FOR_THE_PAGE = ['id_value'];
+
+  function baseUrl(search) {
+    const v = new URLSearchParams(search || '').get('server');
+    return v ? v.replace(/\/+$/, '') : '';
+  }
+
+  async function detect(base, fetchImpl, timeoutMs) {
+    const f = fetchImpl || root.fetch;
+    if (!f) return null;
+    const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), timeoutMs || 1500) : null;
+    try {
+      const res = await f((base || '') + '/api/schema', ctl ? { signal: ctl.signal } : undefined);
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data && Array.isArray(data.watermark) ? data : null;
+    } catch (e) {
+      return null;                       // file://, static hosting, server down: just stay in local mode
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  }
+
+  // The page's units -> the API's. The page's opacity is a percentage; the API's is 0-255 alpha.
+  function pageToSpec(v) {
+    const pct = Math.max(0, Math.min(100, Number(v.opacityPct)));
+    return { text: v.text, opacity: Math.round(pct * 2.55), font_size: v.fontSize, angle: v.angle, spacing: v.spacing };
+  }
+
+  // Options to render as extra controls: schema order, minus what the page already covers,
+  // video-only options, server-local ones, and features this install can't do.
+  function controls(schema) {
+    const caps = schema.capabilities || {};
+    return schema.watermark.filter((o) =>
+      !PAGE_COVERED.includes(o.name) && !NOT_FOR_THE_PAGE.includes(o.name) && !o.local &&
+      o.scope.includes('image') &&
+      !(o.group === 'c2pa' && caps.c2pa === false) &&
+      !(o.name === 'c2pa' && caps.c2pa === false));
+  }
+
+  function visible(option, values) {
+    const req = option.requires || {};
+    return Object.keys(req).every((k) => values[k] === req[k]);
+  }
+
+  // raw: {name: string | boolean} straight from the form -> typed values, only for options that
+  // are currently relevant and actually filled in.
+  function cleanExtras(schema, raw) {
+    const out = {};
+    for (const o of controls(schema)) {
+      if (!visible(o, raw)) continue;
+      const v = raw[o.name];
+      if (o.type === 'bool') { if (v === true) out[o.name] = true; continue; }
+      if (v === undefined || v === null || v === '') continue;
+      if (o.type === 'int' || o.type === 'float') {
+        const n = Number(v);
+        if (Number.isFinite(n)) out[o.name] = o.type === 'int' ? Math.round(n) : n;
+      } else {
+        out[o.name] = String(v);
+      }
+    }
+    return out;
+  }
+
+  async function watermark(base, file, spec, format, extra) {
+    const req = Object.assign({ spec: spec, format: format }, extra || {});
+    const res = await root.fetch((base || '') + '/api/watermark', {
+      method: 'POST',
+      headers: { 'X-WM-Spec': encodeURIComponent(JSON.stringify(req)) },
+      body: file,
+    });
+    if (!res.ok) {
+      let message = 'Server error (HTTP ' + res.status + ')';
+      try { message = (await res.json()).error.message; } catch (e) { /* keep the generic message */ }
+      const err = new Error(message);
+      err.status = res.status;
+      throw err;
+    }
+    return { blob: await res.blob(), meta: JSON.parse(res.headers.get('X-WM-Result') || '{}') };
+  }
+
+  root.WmServer = { PAGE_COVERED, baseUrl, detect, pageToSpec, controls, visible, cleanExtras, watermark };
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script>
+(function () {
+  // ---------------------------------------------------------------------
+  // Minimal ZIP writer (STORE / no compression) - kept in-page rather than
+  // pulled from a library, to match this tool's single-file, no-build,
+  // nothing-leaves-the-browser design.
+  // ---------------------------------------------------------------------
+  const CRC_TABLE = (() => {
+    const table = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      table[n] = c >>> 0;
+    }
+    return table;
+  })();
+
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function dosDateTime(date) {
+    const time = ((date.getHours() & 0x1F) << 11) | ((date.getMinutes() & 0x3F) << 5) | ((date.getSeconds() >> 1) & 0x1F);
+    const day = (((date.getFullYear() - 1980) & 0x7F) << 9) | (((date.getMonth() + 1) & 0xF) << 5) | (date.getDate() & 0x1F);
+    return { time, day };
+  }
+
+  function writeUint32LE(view, offset, value) { view.setUint32(offset, value, true); }
+  function writeUint16LE(view, offset, value) { view.setUint16(offset, value, true); }
+
+  // files: [{ name: string, data: Uint8Array }]
+  function buildZip(files) {
+    const { time, day } = dosDateTime(new Date());
+    const encoder = new TextEncoder();
+    const localParts = [];
+    const centralParts = [];
+    let offset = 0;
+
+    for (const f of files) {
+      const nameBytes = encoder.encode(f.name);
+      const crc = crc32(f.data);
+      const size = f.data.length;
+
+      const localHeader = new DataView(new ArrayBuffer(30));
+      writeUint32LE(localHeader, 0, 0x04034b50);
+      writeUint16LE(localHeader, 4, 20);
+      writeUint16LE(localHeader, 6, 0x0800); // bit 11: filename is UTF-8
+      writeUint16LE(localHeader, 8, 0); // store, no compression
+      writeUint16LE(localHeader, 10, time);
+      writeUint16LE(localHeader, 12, day);
+      writeUint32LE(localHeader, 14, crc);
+      writeUint32LE(localHeader, 18, size);
+      writeUint32LE(localHeader, 22, size);
+      writeUint16LE(localHeader, 26, nameBytes.length);
+      writeUint16LE(localHeader, 28, 0);
+
+      localParts.push(new Uint8Array(localHeader.buffer), nameBytes, f.data);
+
+      const centralHeader = new DataView(new ArrayBuffer(46));
+      writeUint32LE(centralHeader, 0, 0x02014b50);
+      writeUint16LE(centralHeader, 4, 20);
+      writeUint16LE(centralHeader, 6, 20);
+      writeUint16LE(centralHeader, 8, 0x0800); // bit 11: filename is UTF-8
+      writeUint16LE(centralHeader, 10, 0);
+      writeUint16LE(centralHeader, 12, time);
+      writeUint16LE(centralHeader, 14, day);
+      writeUint32LE(centralHeader, 16, crc);
+      writeUint32LE(centralHeader, 20, size);
+      writeUint32LE(centralHeader, 24, size);
+      writeUint16LE(centralHeader, 28, nameBytes.length);
+      writeUint16LE(centralHeader, 30, 0);
+      writeUint16LE(centralHeader, 32, 0);
+      writeUint16LE(centralHeader, 34, 0);
+      writeUint16LE(centralHeader, 36, 0);
+      writeUint32LE(centralHeader, 38, 0);
+      writeUint32LE(centralHeader, 42, offset);
+
+      centralParts.push(new Uint8Array(centralHeader.buffer), nameBytes);
+
+      offset += 30 + nameBytes.length + size;
+    }
+
+    const centralStart = offset;
+    let centralSize = 0;
+    for (const p of centralParts) centralSize += p.length;
+
+    const end = new DataView(new ArrayBuffer(22));
+    writeUint32LE(end, 0, 0x06054b50);
+    writeUint16LE(end, 4, 0);
+    writeUint16LE(end, 6, 0);
+    writeUint16LE(end, 8, files.length);
+    writeUint16LE(end, 10, files.length);
+    writeUint32LE(end, 12, centralSize);
+    writeUint32LE(end, 16, centralStart);
+    writeUint16LE(end, 20, 0);
+
+    const allParts = [...localParts, ...centralParts, new Uint8Array(end.buffer)];
+    return new Blob(allParts, { type: "application/zip" });
+  }
+
+  // ---------------------------------------------------------------------
+  // App state
+  // ---------------------------------------------------------------------
+  const fileInput = document.getElementById('file-input');
+  const browseBtn = document.getElementById('browse-btn');
+  const previewToolbar = document.getElementById('preview-toolbar');
+  const thumbRail = document.getElementById('thumb-rail');
+  const dropzone = document.getElementById('dropzone');
+  const dropzoneEmpty = document.getElementById('dropzone-empty');
+  const canvasFrame = document.getElementById('canvas-frame');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const metaStrip = document.getElementById('meta-strip');
+  const metaRes = document.getElementById('meta-res');
+  const metaFormat = document.getElementById('meta-format');
+  const countPill = document.getElementById('count-pill');
+  const countValue = document.getElementById('count-value');
+
+  const textInput = document.getElementById('wm-text');
+  const opacityInput = document.getElementById('wm-opacity');
+  const spacingInput = document.getElementById('wm-spacing');
+  const fontsizeInput = document.getElementById('wm-fontsize');
+  const angleInput = document.getElementById('wm-angle');
+
+  const opacityValue = document.getElementById('opacity-value');
+  const spacingValue = document.getElementById('spacing-value');
+  const fontsizeValue = document.getElementById('fontsize-value');
+  const angleValue = document.getElementById('angle-value');
+
+  const downloadBtn = document.getElementById('download-btn');
+  const downloadAllBtn = document.getElementById('download-all-btn');
+  const downloadHint = document.getElementById('download-hint');
+  const segButtons = document.querySelectorAll('.seg-btn');
+  const swatches = document.querySelectorAll('.swatch');
+
+  const progressWrap = document.getElementById('progress-wrap');
+  const progressFill = document.getElementById('progress-fill');
+  const progressLabel = document.getElementById('progress-label');
+
+  let images = [];        // { id, name, img (HTMLImageElement), file (File), thumbEl }
+  let activeId = null;
+  let outputFormat = 'png';
+  let currentColor = '#ffffff';
+  let rafPending = false;
+  let nextId = 1;
+  let busy = false;
+
+  function hexToRgb(hex) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function activeEntry() {
+    return images.find((e) => e.id === activeId) || null;
+  }
+
+  function updateCountPill() {
+    countValue.textContent = images.length;
+    countPill.hidden = images.length === 0;
+  }
+
+  function scheduleRedraw() {
+    if (!activeEntry() || rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => { rafPending = false; redraw(); });
+  }
+
+  function drawWatermarkGrid(width, height, text, opacityPct, spacing, fontSize, angleDeg, color) {
+    if (!text) return;
+    const [r, g, b] = hexToRgb(color);
+    ctx.save();
+    ctx.translate(width / 2, height / 2);
+    ctx.rotate(angleDeg * Math.PI / 180);
+    ctx.font = `bold ${fontSize}px "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", -apple-system, "Segoe UI", Roboto, sans-serif`;
+    ctx.fillStyle = `rgba(${r},${g},${b},${Math.max(0, Math.min(100, opacityPct)) / 100})`;
+    ctx.textBaseline = 'top';
+
+    const diagonal = Math.sqrt(width * width + height * height) + spacing * 2;
+    const half = diagonal / 2;
+    let row = 0;
+    for (let y = -half; y < half; y += spacing) {
+      const offsetX = (row % 2 === 1) ? spacing / 2 : 0;
+      for (let x = -half - spacing; x < half + spacing; x += spacing) {
+        ctx.fillText(text, x + offsetX, y);
+      }
+      row++;
+    }
+    ctx.restore();
+  }
+
+  function redrawFor(imgEl) {
+    canvas.width = imgEl.naturalWidth;
+    canvas.height = imgEl.naturalHeight;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (outputFormat === 'jpeg') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(imgEl, 0, 0, canvas.width, canvas.height);
+    drawWatermarkGrid(
+      canvas.width,
+      canvas.height,
+      textInput.value,
+      Number(opacityInput.value),
+      Number(spacingInput.value),
+      Number(fontsizeInput.value),
+      Number(angleInput.value),
+      currentColor
+    );
+  }
+
+  function redraw() {
+    const entry = activeEntry();
+    if (!entry) return;
+    redrawFor(entry.img);
+    metaRes.textContent = entry.img.naturalWidth + ' × ' + entry.img.naturalHeight + 'px';
+    metaFormat.textContent = outputFormat.toUpperCase();
+    downloadHint.textContent = 'Matches the original ' + entry.img.naturalWidth + '×' + entry.img.naturalHeight + 'px resolution';
+  }
+
+  function setActive(id) {
+    activeId = id;
+    document.querySelectorAll('.thumb').forEach((t) => t.classList.toggle('active', Number(t.dataset.id) === id));
+    redraw();
+  }
+
+  function addThumb(entry) {
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    thumb.dataset.id = String(entry.id);
+    const img = document.createElement('img');
+    img.src = entry.img.src;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'thumb-remove';
+    remove.textContent = '×';
+    remove.title = 'Remove';
+    remove.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeImage(entry.id);
+    });
+    thumb.appendChild(img);
+    thumb.appendChild(remove);
+    thumb.addEventListener('click', () => setActive(entry.id));
+    entry.thumbEl = thumb;
+    thumbRail.insertBefore(thumb, document.getElementById('thumb-add-btn'));
+  }
+
+  function removeImage(id) {
+    const idx = images.findIndex((e) => e.id === id);
+    if (idx === -1) return;
+    images[idx].thumbEl.remove();
+    images.splice(idx, 1);
+    updateCountPill();
+
+    if (images.length === 0) {
+      activeId = null;
+      dropzoneEmpty.hidden = false;
+      canvasFrame.hidden = true;
+      metaStrip.hidden = true;
+      previewToolbar.hidden = true;
+      downloadBtn.disabled = true;
+      downloadAllBtn.disabled = true;
+      downloadHint.textContent = 'Choose one or more images to start';
+      return;
+    }
+    if (activeId === id) setActive(images[Math.max(0, idx - 1)].id);
+  }
+
+  function addFiles(fileList) {
+    const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/'));
+    if (!files.length) return;
+
+    let firstNewId = null;
+    let remaining = files.length;
+
+    files.forEach((file) => {
+      const name = file.name.replace(/\.[^.]+$/, '') || 'image';
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const entry = { id: nextId++, name, img, file };
+          images.push(entry);
+          addThumb(entry);
+          if (firstNewId === null) firstNewId = entry.id;
+
+          remaining -= 1;
+          if (remaining === 0) {
+            dropzoneEmpty.hidden = true;
+            canvasFrame.hidden = false;
+            metaStrip.hidden = false;
+            previewToolbar.hidden = false;
+            downloadBtn.disabled = false;
+            downloadAllBtn.disabled = images.length < 1;
+            updateCountPill();
+            setActive(activeId === null ? firstNewId : activeId);
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  browseBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => { addFiles(e.target.files); fileInput.value = ''; });
+
+  ['dragenter', 'dragover'].forEach((evt) => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.add('drag-over');
+    });
+  });
+  ['dragleave', 'drop'].forEach((evt) => {
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+    });
+  });
+  dropzone.addEventListener('drop', (e) => addFiles(e.dataTransfer.files));
+
+  // "Add more" tile at the end of the thumbnail rail
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.id = 'thumb-add-btn';
+  addBtn.className = 'thumb-add';
+  addBtn.title = 'Add more images';
+  addBtn.textContent = '+';
+  addBtn.addEventListener('click', () => fileInput.click());
+  thumbRail.appendChild(addBtn);
+
+  textInput.addEventListener('input', scheduleRedraw);
+
+  opacityInput.addEventListener('input', () => {
+    opacityValue.textContent = opacityInput.value + '%';
+    scheduleRedraw();
+  });
+  spacingInput.addEventListener('input', () => {
+    spacingValue.textContent = spacingInput.value + 'px';
+    scheduleRedraw();
+  });
+  fontsizeInput.addEventListener('input', () => {
+    fontsizeValue.textContent = fontsizeInput.value + 'px';
+    scheduleRedraw();
+  });
+  angleInput.addEventListener('input', () => {
+    angleValue.textContent = angleInput.value + '°';
+    scheduleRedraw();
+  });
+
+  swatches.forEach((sw) => {
+    sw.addEventListener('click', () => {
+      swatches.forEach((s) => s.classList.remove('active'));
+      sw.classList.add('active');
+      currentColor = sw.dataset.color;
+      scheduleRedraw();
+    });
+  });
+
+  segButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      segButtons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      outputFormat = btn.dataset.format;
+      metaFormat.textContent = outputFormat.toUpperCase();
+      scheduleRedraw();
+    });
+  });
+
+  function canvasToBlob(mime, quality) {
+    return new Promise((resolve) => canvas.toBlob(resolve, mime, quality));
+  }
+
+  function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---- Server mode: progressive enhancement -------------------------------------------
+  // Off unless a wmapp server (cli/serve.py) answers /api/schema; on only if the user opts in.
+  const serverBase = WmServer.baseUrl(location.search);
+  const serverPanel = document.getElementById('server-panel');
+  const serverToggle = document.getElementById('srv-toggle');
+  const serverStatus = document.getElementById('srv-status');
+  const serverOptions = document.getElementById('srv-options');
+  const serverPreviewBtn = document.getElementById('srv-preview-btn');
+  const serverNotes = document.getElementById('srv-notes');
+  const footnoteEl = document.getElementById('footnote');
+  const footnoteLocal = footnoteEl.textContent;
+  const serverInputs = {};           // option name -> { opt, input, row }
+  let server = null;                 // the /api/schema payload once a server answered
+  let serverOn = false;
+
+  function buildServerPanel() {
+    const titles = {};
+    server.groups.forEach((g) => { titles[g.id] = g.title; });
+    let lastGroup = null;
+    WmServer.controls(server).forEach((opt) => {
+      if (opt.group !== lastGroup) {
+        const h = document.createElement('p');
+        h.className = 'srv-group';
+        h.textContent = titles[opt.group] || opt.group;
+        serverOptions.appendChild(h);
+        lastGroup = opt.group;
+      }
+      const id = 'srv-' + opt.name;
+      const row = document.createElement('div');
+      row.className = 'srv-row';
+      const label = document.createElement('label');
+      label.htmlFor = id;
+      label.textContent = opt.name.replace(/_/g, ' ');
+      label.title = opt.help;
+      let input;
+      if (opt.type === 'bool') {
+        input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = !!opt.default;
+      } else if (opt.type === 'choice') {
+        input = document.createElement('select');
+        opt.choices.forEach((c) => {
+          const o = document.createElement('option');
+          o.value = o.textContent = c;
+          input.appendChild(o);
+        });
+        input.value = opt.default;
+      } else if (opt.type === 'int' || opt.type === 'float') {
+        input = document.createElement('input');
+        input.type = 'number';
+        if (opt.min !== undefined) input.min = opt.min;
+        if (opt.max !== undefined) input.max = opt.max;
+        input.step = opt.type === 'int' ? '1' : 'any';
+        if (opt.default !== null && opt.default !== undefined) input.value = opt.default;
+      } else {
+        input = document.createElement('input');
+        input.type = 'text';
+      }
+      input.id = id;
+      input.title = opt.help;
+      input.addEventListener(opt.type === 'bool' || opt.type === 'choice' ? 'change' : 'input', refreshServerVisibility);
+      row.append(label, input);
+      serverOptions.appendChild(row);
+      serverInputs[opt.name] = { opt, input, row };
+    });
+    refreshServerVisibility();
+  }
+
+  function readServerValues() {
+    const raw = {};
+    Object.keys(serverInputs).forEach((name) => {
+      const { opt, input } = serverInputs[name];
+      raw[name] = opt.type === 'bool' ? input.checked : input.value;
+    });
+    return raw;
+  }
+
+  function refreshServerVisibility() {
+    const raw = readServerValues();
+    Object.keys(serverInputs).forEach((name) => {
+      const { opt, row } = serverInputs[name];
+      row.hidden = !WmServer.visible(opt, raw);
+    });
+  }
+
+  function serverSpec() {
+    const page = WmServer.pageToSpec({
+      text: textInput.value, opacityPct: Number(opacityInput.value), spacing: Number(spacingInput.value),
+      fontSize: Number(fontsizeInput.value), angle: Number(angleInput.value),
+    });
+    return Object.assign(page, WmServer.cleanExtras(server, readServerValues()));
+  }
+
+  function showServerResult(meta, error) {
+    serverNotes.innerHTML = '';
+    const add = (text, cls) => {
+      const li = document.createElement('li');
+      li.textContent = text;
+      if (cls) li.className = cls;
+      serverNotes.appendChild(li);
+    };
+    if (error) add(error.message, 'error');
+    if (meta) {
+      if (meta.ss_key !== null && meta.ss_key !== undefined) {
+        add('Key to read the hidden mark back: ' + meta.ss_key + ' (save it - it is not stored anywhere)', 'key');
+        const k = serverInputs.ss_key;
+        if (k && !k.input.value) k.input.value = meta.ss_key;   // later images in a batch reuse it
+      }
+      (meta.notes || []).forEach((n) => add(n.message.replace(/^(Note|Warning): /, '')));
+    }
+    serverNotes.hidden = serverNotes.children.length === 0;
+  }
+
+  function setServerBusy(on, label) {
+    busy = on;
+    downloadBtn.disabled = on;
+    downloadAllBtn.disabled = on || images.length < 1;
+    serverPreviewBtn.disabled = on;
+    if (label) serverStatus.textContent = label;
+    if (!on) serverStatus.textContent = 'Rendering on ' + (serverBase || location.origin) + ' with the full pipeline.';
+  }
+
+  function serverRender(entry, extra) {
+    return WmServer.watermark(serverBase, entry.file, serverSpec(), outputFormat, extra);
+  }
+
+  async function serverDownloadOne(entry) {
+    if (busy) return;
+    setServerBusy(true, 'Rendering on server…');
+    try {
+      const { blob, meta } = await serverRender(entry);
+      triggerDownload(blob, entry.name + '_watermark.' + (outputFormat === 'jpeg' ? 'jpg' : 'png'));
+      showServerResult(meta);
+    } catch (err) {
+      showServerResult(null, err);
+    } finally {
+      setServerBusy(false);
+    }
+  }
+
+  async function serverDownloadAll() {
+    if (busy) return;
+    setServerBusy(true);
+    progressWrap.hidden = false;
+    const ext = outputFormat === 'jpeg' ? 'jpg' : 'png';
+    const zipFiles = [];
+    const usedNames = new Set();
+    let lastMeta = null;
+    try {
+      for (let i = 0; i < images.length; i++) {
+        const entry = images[i];
+        progressLabel.textContent = `Rendering on server ${i + 1} / ${images.length} — ${entry.name}`;
+        progressFill.style.width = Math.round((i / images.length) * 100) + '%';
+        // same seed rule as `watermark.py --batch --seed N`: each file gets its own jitter pattern
+        const { blob, meta } = await serverRender(entry, { derive_seed_from: entry.file.name });
+        lastMeta = meta;
+        let name = entry.name + '_watermark.' + ext;
+        let n = 2;
+        while (usedNames.has(name)) { name = entry.name + '_watermark_' + n + '.' + ext; n++; }
+        usedNames.add(name);
+        zipFiles.push({ name, data: new Uint8Array(await blob.arrayBuffer()) });
+        showServerResult(meta);        // also carries a generated ss_key into the form for the next image
+      }
+      progressLabel.textContent = 'Building .zip…';
+      await new Promise((r) => setTimeout(r, 0));
+      triggerDownload(buildZip(zipFiles), 'watermarked_images.zip');
+    } catch (err) {
+      showServerResult(lastMeta, err);
+    } finally {
+      progressWrap.hidden = true;
+      setServerBusy(false);
+    }
+  }
+
+  serverPreviewBtn.addEventListener('click', async () => {
+    const entry = activeEntry();
+    if (!entry || busy) return;
+    setServerBusy(true, 'Rendering preview on server…');
+    try {
+      const { blob, meta } = await serverRender(entry);
+      const bmp = await createImageBitmap(blob);
+      canvas.width = bmp.width;
+      canvas.height = bmp.height;
+      ctx.drawImage(bmp, 0, 0);          // any later control change redraws the local preview over this
+      showServerResult(meta);
+    } catch (err) {
+      showServerResult(null, err);
+    } finally {
+      setServerBusy(false);
+    }
+  });
+
+  serverToggle.addEventListener('change', () => {
+    serverOn = serverToggle.checked;
+    serverOptions.hidden = serverPreviewBtn.hidden = !serverOn;
+    document.querySelector('.swatches').classList.toggle('locked', serverOn);   // the server's mark is white
+    footnoteEl.textContent = serverOn
+      ? 'Server mode: each image is sent to ' + (serverBase || location.origin) +
+        ' to be watermarked, and is not stored there. Turn it off to keep everything in this browser.'
+      : footnoteLocal;
+    serverStatus.textContent = serverOn
+      ? 'Rendering on ' + (serverBase || location.origin) + ' with the full pipeline. The preview here is approximate.'
+      : 'A local server is available. Turn this on for jitter, blend modes, invisible marks, metadata and C2PA.';
+  });
+
+  WmServer.detect(serverBase).then((info) => {
+    if (!info) return;
+    server = info;
+    buildServerPanel();
+    serverPanel.hidden = false;
+  });
+
+  downloadBtn.addEventListener('click', async () => {
+    const entry = activeEntry();
+    if (!entry) return;
+    if (serverOn) { await serverDownloadOne(entry); return; }
+    const mime = outputFormat === 'jpeg' ? 'image/jpeg' : 'image/png';
+    const ext = outputFormat === 'jpeg' ? 'jpg' : 'png';
+    const quality = outputFormat === 'jpeg' ? 0.98 : undefined;
+    redrawFor(entry.img);
+    const blob = await canvasToBlob(mime, quality);
+    if (blob) triggerDownload(blob, entry.name + '_watermark.' + ext);
+  });
+
+  downloadAllBtn.addEventListener('click', async () => {
+    if (busy || images.length === 0) return;
+    if (serverOn) { await serverDownloadAll(); return; }
+    busy = true;
+    downloadBtn.disabled = true;
+    downloadAllBtn.disabled = true;
+    progressWrap.hidden = false;
+
+    const mime = outputFormat === 'jpeg' ? 'image/jpeg' : 'image/png';
+    const ext = outputFormat === 'jpeg' ? 'jpg' : 'png';
+    const quality = outputFormat === 'jpeg' ? 0.98 : undefined;
+    const zipFiles = [];
+    const usedNames = new Set();
+
+    for (let i = 0; i < images.length; i++) {
+      const entry = images[i];
+      progressLabel.textContent = `Processing ${i + 1} / ${images.length} — ${entry.name}`;
+      progressFill.style.width = Math.round(((i) / images.length) * 100) + '%';
+      // yield so the progress bar actually paints between images
+      await new Promise((r) => setTimeout(r, 0));
+
+      redrawFor(entry.img);
+      const blob = await canvasToBlob(mime, quality);
+      const data = new Uint8Array(await blob.arrayBuffer());
+
+      let name = entry.name + '_watermark.' + ext;
+      let n = 2;
+      while (usedNames.has(name)) { name = entry.name + '_watermark_' + n + '.' + ext; n++; }
+      usedNames.add(name);
+      zipFiles.push({ name, data });
+
+      progressFill.style.width = Math.round(((i + 1) / images.length) * 100) + '%';
+    }
+
+    progressLabel.textContent = 'Building .zip…';
+    await new Promise((r) => setTimeout(r, 0));
+    const zipBlob = buildZip(zipFiles);
+    triggerDownload(zipBlob, 'watermarked_images.zip');
+
+    progressWrap.hidden = true;
+    downloadBtn.disabled = false;
+    downloadAllBtn.disabled = false;
+    busy = false;
+    redraw(); // restore the visible preview to the active image
+  });
+})();
+</script>
+</body>
+</html>

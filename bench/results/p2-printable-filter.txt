@@ -1,0 +1,36 @@
+# Plain (non-rescale) spread-spectrum decoder: printable-filter before/after
+
+Command: python3 bench/experiments/plain_decode_printable.py [--after]
+Part A: false positives on 10 periodic (never-stamped) test images x 3 sizes x 3 states (identity/resize0.75/resize1.25) = 90 plain decodes.
+Part B: 4 payloads containing tab/newline/CR x 3 conditions (raw, JPEG q95, JPEG q75) = 12 round-trip trials.
+
+## BEFORE (find_spread_spectrum_payload had no printable filter)
+== Part A: plain-path false positives on periodic images (BEFORE filter)
+   plain decodes on never-stamped periodic images: 90
+   returned non-None text (junk, since nothing was embedded): 8
+     [640x480 bricks32x16 / identity] -> 'D\x01U\x04Q\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00Q@\x11E\x04U\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x10QQ\x04T\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00PE\x01@\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x14'
+     [640x480 bricks32x16 / resize_1.25] -> '\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+     [640x480 dots8 / resize_0.75] -> '?'
+     [320x240 bricks32x16 / identity] -> '\x11'
+     [320x240 bricks32x16 / resize_1.25] -> '\x00\x00\x00\x00\x00\x00\x00\x00'
+     [1280x960 hstripes8 / resize_1.25] -> '\x00\x00\x00\x00'
+     [1280x960 vstripes8 / resize_1.25] -> '\x01\x00\x02\x00'
+     [1280x960 gridlines16 / identity] -> '\x10A\x15UUUUUEU\x15UUUUUUUUUUUUD\x15DTE\x11E\x05\x11\x10EA\x05\x11\x04\x15\x15\x00PU\x15UUUUUUUUUUUUUUUUUUU@\x15\x00\x15\x14QA\x14\x01A\x05U\x15A\x00PTA\x00AUUUUUUUUUUUUUUUUUUUUU@\x05P\x05\x01\x10TE\x14\x00Q\x00\x11P\x11\x14UA\x00\x15UUUUUUUUUUUUUUUUUUUT\x11\x10\x11TTT\x01\x00\x04PED\x04\x05\x10PUP\x15UUUUUUUUUUUUUUUUUUUUE\x14\x05P\x10PU@@\x11PEEE\x05\x14\x10T\x05\x00UUUUUUUUUUUUUUUUUUUU@\x14\x15\x00\x04U\x11@\x04\x04Q\x14E\x15\x15\x01E\x05\x00DUUUUQUUUUUUUUUUUUUUUDD\x11\x11E\x15DUU\x05E\x01\x05DP\x15\x11DEDUUUUUUUUUUUUUUUUUUUQPQ\x01\x11\x00EU\x05E\x01DU\x05QA\x04D\x01@\x14U\x15UUUUUUUUUUUUUUUUUUAEP\x14@PA\x15EQT\x04U\x15\x10EAU\x01P\x15UUUUUUUUUUUUUUUUUUUQ@P\x15UTEAQ\x15A@\x00\x00\x01@D\x05\x00E\x15UUUQUUUUUUU\x15UUUUUUUQUPT\x00\x10ET@\x00AAA\x04\x15\x04\x14\x00@\x10UUUUUUUUUUUUUUUU\x11UUEQU\x15Q@\x01UD\x10\x15\x00\x00Q\x04\x11UQ\x05\x14\x11\x15UUUUUUUEUUUUUUUUUUUAPQ\x11\x15TD\x04QP\x10\x15\x01\x15UTTE\x14\x05UUU\x15UUUUUUUUUUUUUUUUQ\x04\x10AUDPEUA\x14T\x04\x00\x04\x10\x00U\x04T\x15UUUUUUUUUUUUUUUUQUUU\x11\x01P@U\x00\x04\x10\x10@EPE\x04\x04A\x01D\x01UUUUUUUUUUUUUUUUUUUUDEDU\x15QU\x05\x11TEE\x11@UT\x04\x15\x05\x05\x15UUUUUUUUUUUUUUUUU\x15UD\x11\x01U\x05\x11T\x05\x00T\x10\x11AADEU\x14\x01\x05\x15UUUUUUUUUUUUUUU\x15UU\x15DDQ\x00\x01PPE\x05\x05U\x11\x05\x15\x05PDUDUUUUUUUUUUUUUUUUUUUUUUAEE\x14\x15\x11U\x05\x10U\x11QDD\x05T\x01\x11\x00UUUUUUUUUUUU\x15U\x15UUUUUU\x00\x05\x10A\x04\x14\x05P\x15P\x14QE\x04\x15\x01\x11\x01D\x15UUUUUUUUUUUUTUUUUUUUU\x01Q@\x14\x04T\x10\x00\x05T\x15P\x00PQA\x04UUUUUUUUUUUUUUUUUUUUUQPP\x14EQ\x04\x00\x04E\x01PE\x05Q\x01\x00\x05\x11\x00UEUUUUUUU\x15UUUUUUUUUUTD@\x05DTE\x15E\x04\x00E\x11PP\x04Q\x01D\x05\x15\x15EUUUUUUUUUUUUUUUUUTT\x10\x00\x14\x05DP\x04\x01E\x15QQQ\x11@\x05\x14\x00\x15UUUUUUUUUUUUTUU\x15UUUP\x10\x15@T\x10E\x04D\x11EDP\x11U\x00EEQT\x15UUUUUUUUUUUUUUUUUUU\x00@\x10TPD\x01TTUET\x14\x04AT\x04\x15\x05PUUUUUUUUUUUUUUUUUTUUUA\x11\x10\x01U\x01PDE\x15D\x11\x00\x14\x11PDPT\x15UUUUTUUU'
+
+== Part B: control-character payloads round-trip through the plain path (BEFORE filter)
+   control-char payload trials (4 payloads x 3 conditions): 12
+   round-tripped exactly: 12
+
+== Summary: periodic junk 8/90; control-char round-trip 12/12
+
+## AFTER (printable filter added inside find_spread_spectrum_payload, spread.py)
+== Part A: plain-path false positives on periodic images (AFTER filter)
+   plain decodes on never-stamped periodic images: 90
+   returned non-None text (junk, since nothing was embedded): 1
+     [640x480 dots8 / resize_0.75] -> '?'
+
+== Part B: control-character payloads round-trip through the plain path (AFTER filter)
+   control-char payload trials (4 payloads x 3 conditions): 12
+   round-tripped exactly: 12
+
+== Summary: periodic junk 1/90; control-char round-trip 12/12

@@ -1,0 +1,43 @@
+# EXACT versions of the environment this tool was tested in. requirements.txt keeps the allowed RANGES;
+# this file is the one environment that was actually run through the whole test suite.
+#
+#     pip install -r requirements-lock.txt
+#
+# Needs Python >= 3.12 (numpy 2.5.4 does; Pillow 13.0.0 needs >= 3.11). On an older Python, use requirements.txt.
+#
+# Where the versions come from: OpenCV 4.14.0.94, c2pa-python 0.37.10, numpy 2.5.4 and Pillow 13.0.0 are the versions
+# of the environment checked in v33 (a fresh venv, `pip install -r requirements-dev.txt`, 466 tests passing). Every
+# other line is what pip resolved on 2026-10-21 when those four were installed first (Python 3.12.3, Linux x86_64).
+# There are no hashes. To regenerate: new venv, install those four pins, `pip install -r requirements-dev.txt`,
+# `pip freeze`, run `pytest tests/`, and only then replace this file.
+
+# --- needed to run the tool ---------------------------------------------------------------------------------
+Pillow==13.0.0
+numpy==2.5.4
+opencv-python-headless==4.14.0.94
+tqdm==4.70.1
+piexif==1.1.3
+cryptography==50.0.2
+c2pa-python==0.37.10
+# c2pa-python's own dependencies
+certifi==2026.10.18
+cffi==2.1.1
+charset-normalizer==3.5.2
+idna==3.20
+pycparser==3.11
+requests==2.34.2
+toml==0.10.2
+urllib3==2.8.0
+
+# --- only needed to run the tests (the pytest part of requirements-dev.txt) ---------------------------------
+pytest==9.1.1
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+Pygments==2.21.0
+
+# --- only needed for the TIFF probes bench/experiments/tiff_*.py (the other part of requirements-dev.txt) -----
+# Added after the full test run described above: nothing in tests/ imports them. Resolved by pip on 2026-10-21;
+# the four probes were run against exactly these versions (see bench/README.md, "TIFF probes").
+tifffile==2026.10.15
+imagecodecs==2026.10.10

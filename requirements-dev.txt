@@ -1,0 +1,9 @@
+-r requirements.txt
+pytest>=7.0.0
+
+# Only for the TIFF probes in bench/experiments/ (tiff_probe.py, tiff_e2e.py, tiff_e2e_compression.py,
+# tiff_e2e_hidden_marks.py): they write TIFF variants that Pillow cannot (16-bit, float, planar, multipage, ...).
+# Neither the tool nor tests/ import them. Tested with tifffile 2026.10.15 and imagecodecs 2026.10.10; no lower
+# bound has been tried.
+tifffile
+imagecodecs

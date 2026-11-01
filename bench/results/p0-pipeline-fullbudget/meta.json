@@ -1,0 +1,65 @@
+{
+ "created": "2026-09-20T17:12:49+00:00",
+ "suite": "standard",
+ "seed": 20260919,
+ "jobs": 1,
+ "wall_seconds": 163.1,
+ "units": 8,
+ "records": 24,
+ "config": {
+  "kinds": [
+   "pink",
+   "gradnoise"
+  ],
+  "sizes": [
+   [
+    640,
+    480
+   ]
+  ],
+  "n_images": 3,
+  "payloads": [
+   "short"
+  ],
+  "alphas": [
+   12.0
+  ],
+  "attacks": [
+   "pipeline_resize_jpeg_crop",
+   "pipeline_heavy_repost"
+  ],
+  "rescale_images": 3,
+  "n_neg": 0,
+  "n_neg_rescale": 6,
+  "n_wrongkey_images": 0,
+  "n_wrong_keys": 8,
+  "suite": "standard",
+  "seed": 20260919,
+  "jobs": 1,
+  "decoders": [
+   "ss_rescale"
+  ],
+  "images_dir": null,
+  "max_side": 1600,
+  "rescale_budget": 20.0,
+  "slow_negatives": false
+ },
+ "wmcore_fingerprint": "cd5b47394d21",
+ "defaults": {
+  "DEFAULT_SS_ALPHA": 12.0,
+  "SS_RESCALE_RANGE": [
+   0.5,
+   2.0
+  ],
+  "DEFAULT_RESCALE_BUDGET_SECONDS": 20.0
+ },
+ "env": {
+  "python": "3.12.3",
+  "numpy": "2.4.4",
+  "opencv": "4.13.0",
+  "pillow": "12.1.1",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 1,
+  "machine": "x86_64"
+ }
+}

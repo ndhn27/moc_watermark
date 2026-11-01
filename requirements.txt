@@ -1,0 +1,30 @@
+Pillow>=10.0.0
+numpy>=1.24.0
+# Capped below 5: OpenCV 5.0 no longer has cv2.CascadeClassifier, which the
+# Haar face detector in wmcore/adaptive.py (--adaptive, images and video) needs;
+# with 5.x installed that code raises AttributeError (13 tests in
+# test_adaptive.py / test_wmapp.py fail). Tested on 4.11 and 4.14. Raise the cap only
+# after adaptive.py has been ported and the full test suite passes on 5.x.
+opencv-python-headless>=4.9.0,<5
+tqdm>=4.66.0
+
+# Optional: only used for --author/--copyright EXIF metadata on JPEG output
+# (wmcore.py imports it in a try/except and degrades gracefully - with just a
+# printed note - if it's missing; PNG metadata does not need it at all).
+# Listed here anyway so `pip install -r requirements.txt` "just works" for
+# everyone; if you want to skip it, install the other 4 packages by hand.
+piexif>=1.1.3
+
+# Optional: only used for --c2pa (C2PA / Content Credentials signing).
+# c2pa_provenance.py imports both in a try/except and --c2pa fails fast with
+# a clear message (rather than silently degrading, unlike piexif above) if
+# either is missing - a requested cryptographic signature that silently
+# didn't happen would be a much worse surprise than a skipped metadata
+# field. cryptography is also what generates the auto-reused local dev
+# certificate at ~/.watermark-tool/ (see cli/c2pa_provenance.py).
+# Pinned to the releases this was tested with: 0.37.3-0.37.10 pass every C2PA test; 0.37.12 and 0.38.0 reject the
+# c2pa.watermarked action this tool writes (assertion.action.softBindingMissing: they want a soft-binding assertion for a
+# watermark action, which the tool does not write yet); 0.37.0 and 0.37.1 raise TypeError (ta_url) in the signer. With an
+# unsupported version --c2pa reports that the file was not signed rather than failing.
+c2pa-python>=0.37.3,<0.37.11
+cryptography>=41.0.0

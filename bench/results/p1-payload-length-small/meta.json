@@ -1,0 +1,77 @@
+{
+ "created": "2026-09-20T21:49:01+00:00",
+ "suite": "standard",
+ "seed": 20260919,
+ "jobs": 1,
+ "wall_seconds": 38.3,
+ "units": 136,
+ "records": 1056,
+ "config": {
+  "kinds": [
+   "pink",
+   "gradnoise"
+  ],
+  "sizes": [
+   [
+    320,
+    240
+   ],
+   [
+    480,
+    360
+   ]
+  ],
+  "n_images": 8,
+  "payloads": [
+   "id",
+   "short",
+   "medium",
+   "long"
+  ],
+  "alphas": [
+   12.0
+  ],
+  "attacks": [
+   "identity",
+   "jpeg_75",
+   "jpeg_60",
+   "jpeg_50",
+   "crop_top_64",
+   "noise_5",
+   "blur_1.0"
+  ],
+  "rescale_images": 4,
+  "n_neg": 2,
+  "n_neg_rescale": 6,
+  "n_wrongkey_images": 2,
+  "n_wrong_keys": 2,
+  "suite": "standard",
+  "seed": 20260919,
+  "jobs": 1,
+  "decoders": [
+   "ss"
+  ],
+  "images_dir": null,
+  "max_side": 1600,
+  "rescale_budget": 20.0,
+  "slow_negatives": false
+ },
+ "wmcore_fingerprint": "e9a950ab80b7",
+ "defaults": {
+  "DEFAULT_SS_ALPHA": 12.0,
+  "SS_RESCALE_RANGE": [
+   0.5,
+   2.0
+  ],
+  "DEFAULT_RESCALE_BUDGET_SECONDS": 20.0
+ },
+ "env": {
+  "python": "3.12.3",
+  "numpy": "2.4.4",
+  "opencv": "4.13.0",
+  "pillow": "12.1.1",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 1,
+  "machine": "x86_64"
+ }
+}

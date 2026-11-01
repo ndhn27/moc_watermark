@@ -1,0 +1,98 @@
+{
+ "summary": {
+  "kind": "gradnoise",
+  "size": [
+   640,
+   480
+  ],
+  "n": 12,
+  "rescale_budget": 10.0,
+  "identity_grid_on": [
+   12,
+   12
+  ],
+  "resize_rescale_grid_on": [
+   12,
+   12
+  ],
+  "resize_rescale_grid_off": [
+   12,
+   12
+  ],
+  "elapsed_s": 147.3
+ },
+ "rows": [
+  {
+   "seed": 5000,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5001,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5002,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5003,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5004,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5005,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5006,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5007,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5008,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5009,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5010,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  },
+  {
+   "seed": 5011,
+   "identity_grid_on": true,
+   "resize_rescale_grid_on": true,
+   "resize_rescale_grid_off": true
+  }
+ ]
+}

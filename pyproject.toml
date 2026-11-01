@@ -1,0 +1,46 @@
+# Project metadata and tool configuration.
+#
+# Two ways to get an environment, on purpose:
+#   * requirements.txt       - version RANGES (what the tool is allowed to run on). The single source of truth for
+#                              the ranges: [project].dependencies below is read from that file, not copied.
+#   * requirements-lock.txt  - EXACT versions of the environment the full test suite was run in. Use it when you
+#                              want the environment that was actually checked:  pip install -r requirements-lock.txt
+#
+# This repository is an application, not a published library: nothing here is installed as a Python package
+# (cli/ is run as scripts, tests/conftest.py puts it on sys.path). `pip install -e ".[dev]"` therefore installs only
+# the dependencies (and pytest), which is the one thing a pyproject is needed for here.
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "watermark-tool"
+# Placeholder: releases of this repo are git tags, not package versions.
+version = "0.0.0"
+description = "Layered image/video watermarking: visible grid, hidden LSB and spread-spectrum marks, C2PA provenance."
+readme = "README.md"
+# PolyForm Noncommercial 1.0.0: free for noncommercial use, commercial use needs the author's approval (see LICENSE).
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE"]
+# The floor comes from c2pa-python 0.37.x (needs Python >= 3.10), which requirements.txt lists. The code itself uses
+# nothing newer than Python 3.8 syntax (checked with vermin). Run so far on Python 3.12 and 3.13; 3.10 and 3.11 have
+# not been tried. The EXACT lock (requirements-lock.txt) needs Python >= 3.12, because numpy 2.5.4 does.
+requires-python = ">=3.10"
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+# Same packages as requirements-dev.txt: pytest with the same floor, and tifffile + imagecodecs (no floor), which only
+# the bench/experiments/tiff_*.py probes use.
+dev = ["pytest>=7.0.0", "tifffile", "imagecodecs"]
+
+[tool.setuptools]
+# No importable packages: see the note at the top. Without this, setuptools' flat-layout discovery refuses to build
+# because cli/, tests/, bench/ and web/ all sit at the top level.
+py-modules = []
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

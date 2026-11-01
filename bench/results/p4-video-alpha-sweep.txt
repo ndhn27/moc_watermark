@@ -1,0 +1,5 @@
+[đã xác minh] alpha= 12.0  crf23   47/60   mean|Δpixel|=4.705
+[đã xác minh] alpha= 18.0  crf23   60/60   mean|Δpixel|=6.939
+[đã xác minh] alpha= 24.0  crf23   60/60   mean|Δpixel|=9.286
+[đã xác minh] alpha= 32.0  crf23   60/60   mean|Δpixel|=12.370
+[đã xác minh] alpha= 40.0  crf23   60/60   mean|Δpixel|=15.456

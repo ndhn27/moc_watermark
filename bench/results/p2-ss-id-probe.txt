@@ -1,0 +1,49 @@
+
+== synthetic 640x480  (16 images)
+attack         n   ss ss_id sum_exact   payload-bit errors (of 80) where ss_id missed
+identity      16   16    16        16   []
+jpeg_50       16   16    16        16   []
+jpeg_40       16   15    16        16   []
+jpeg_30       16   15    16        16   []
+jpeg_20       16    5    15        15   [1]
+noise_10      16   16    16        16   []
+noise_15      16   16    16        16   []
+blur_1.0      16   16    16        16   []
+blur_1.5      16   13    16        16   []
+blur_2.0      16    9    12        12   [1, 2, 2, 4]
+crop_top_64   16   15    16        16   []
+
+== synthetic 320x240  (16 images)
+attack         n   ss ss_id sum_exact   payload-bit errors (of 80) where ss_id missed
+identity      16   16    16        16   []
+jpeg_50       16   16    16        16   []
+jpeg_40       16   16    16        16   []
+jpeg_30       16   10    16        16   []
+jpeg_20       16    1     8         8   [4, 9, 10, 11, 11, 12, 13, 13]
+noise_10      16   16    16        16   []
+noise_15      16   16    16        16   []
+blur_1.0      16   14    16        16   []
+blur_1.5      16    9    13        13   [1, 1, 4]
+blur_2.0      16    6     8         8   [2, 3, 6, 10, 11, 14, 16, 16]
+crop_top_64   16   16    16        16   []
+
+== real images in /home/claude/realimgs  (7 images)
+attack         n   ss ss_id sum_exact   payload-bit errors (of 80) where ss_id missed
+identity       7    7     7         7   []
+jpeg_50        7    7     7         7   []
+jpeg_40        7    7     7         7   []
+jpeg_30        7    5     6         6   [1]
+jpeg_20        7    0     6         6   [1]
+noise_10       7    7     7         7   []
+noise_15       7    7     7         7   []
+blur_1.0       7    7     7         7   []
+blur_1.5       7    3     5         5   [2, 3]
+blur_2.0       7    0     1         1   [1, 1, 6, 12, 13, 14]
+crop_top_64    7    7     7         7   []
+
+== full wmapp pipeline: 640x480 gradnoise, grid text on, spread mark carrying the ID, JPEG re-save (6 images)
+ JPEG q   ss  ss_id   (of 6)
+     50    6      6
+     30    6      6
+     20    0      4
+     15    0      0

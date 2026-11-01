@@ -1,0 +1,24 @@
+
+== synthetic 640x480: 12 unmarked images x 3 attacks
+   searches                                      36
+   decode attempts (hypotheses)                  36
+   ... text decoder returned something           0
+   ... ID decoder returned an ID (all false)     0
+   searches the text decoder ended up accepting  0
+   searches that hit the time budget             0
+
+== synthetic 320x240: 12 unmarked images x 3 attacks
+   searches                                      36
+   decode attempts (hypotheses)                  51
+   ... text decoder returned something           0
+   ... ID decoder returned an ID (all false)     0
+   searches the text decoder ended up accepting  0
+   searches that hit the time budget             0
+
+== real images in /home/claude/realimgs: 7 unmarked images x 3 attacks
+   searches                                      21
+   decode attempts (hypotheses)                  60
+   ... text decoder returned something           0
+   ... ID decoder returned an ID (all false)     0
+   searches the text decoder ended up accepting  0
+   searches that hit the time budget             2

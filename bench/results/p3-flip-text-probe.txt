@@ -1,0 +1,22 @@
+== A. marked TEXT payloads, mirrored: text decoder after undoing the right / a wrong mirroring
+   right orientation: read 283/288, none 2, wrong string 3
+   the 3 wrong orientations of the same images: returned something on 1/864
+
+== B. never-stamped images: text decoder on each orientation (anything returned = false positive)
+   synthetic natural-ish (pink, gradnoise; 640x480 and 320x240; 100 images): returned per orientation: none=0, h=0, v=0, hv=0
+   10 periodic patterns x 3 sizes x 3 states (90 images): returned per orientation: none=2, h=1, v=2, hv=0
+     [320x240 bricks32x16 / identity / orientation v] -> 'DPDT'
+     [320x240 bricks32x16 / resize_0.75 / orientation v] -> ' '
+     [1280x960 gridlines16 / resize_0.75 / orientation none] -> '%'
+     [1280x960 bricks32x16 / identity / orientation none] -> '"*'
+     [1280x960 bricks32x16 / resize_0.75 / orientation h] -> 'I$'
+
+== C. shipped mirror-aware decoder vs old decoder, periodic never-stamped images
+   90 images: old decoder returned something on 2, mirror-aware on 2; different from the old one's result on 0
+
+== D. cost of the mirror-aware decoder vs the old one (1 CPU, best of 3, block DCT included)
+   640x480 unmarked: old 38 ms, mirror-aware 131 ms
+   640x480 marked, not mirrored: old 42 ms, mirror-aware 133 ms
+   1280x960 unmarked: old 195 ms, mirror-aware 541 ms
+   1280x960 marked, not mirrored: old 184 ms, mirror-aware 521 ms
+   4000x3000 unmarked: old 1804 ms, mirror-aware 5227 ms

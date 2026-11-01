@@ -1,0 +1,6 @@
+__pycache__/
+# Raw benchmark data: big and regenerable. The written notes (results/*.md, results/*.txt) and each run's
+# report.md / meta.json stay in git, because the README links to them as the evidence for its numbers.
+results/**/records.jsonl
+results/**/summary.json
+results/**/summary.csv

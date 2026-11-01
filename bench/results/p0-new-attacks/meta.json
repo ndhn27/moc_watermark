@@ -1,0 +1,82 @@
+{
+ "created": "2026-09-20T17:09:29+00:00",
+ "suite": "standard",
+ "seed": 20260919,
+ "jobs": 1,
+ "wall_seconds": 170.8,
+ "units": 16,
+ "records": 238,
+ "config": {
+  "kinds": [
+   "pink",
+   "gradnoise"
+  ],
+  "sizes": [
+   [
+    640,
+    480
+   ]
+  ],
+  "n_images": 4,
+  "payloads": [
+   "short"
+  ],
+  "alphas": [
+   12.0
+  ],
+  "attacks": [
+   "identity",
+   "jpeg_75",
+   "webp_80",
+   "avif_60",
+   "resize_0.75",
+   "crop_unaligned_3",
+   "crop_unaligned_1",
+   "crop_unaligned_7",
+   "crop_unaligned_15",
+   "rotate_1deg",
+   "rotate_2deg",
+   "rotate_3deg",
+   "rotate_5deg",
+   "flip_horizontal",
+   "perspective_light",
+   "perspective_medium",
+   "pipeline_resize_jpeg_crop",
+   "pipeline_heavy_repost"
+  ],
+  "rescale_images": 4,
+  "n_neg": 4,
+  "n_neg_rescale": 2,
+  "n_wrongkey_images": 4,
+  "n_wrong_keys": 4,
+  "suite": "standard",
+  "seed": 20260919,
+  "jobs": 1,
+  "decoders": [
+   "ss",
+   "ss_rescale"
+  ],
+  "images_dir": null,
+  "max_side": 1600,
+  "rescale_budget": 6.0,
+  "slow_negatives": false
+ },
+ "wmcore_fingerprint": "cd5b47394d21",
+ "defaults": {
+  "DEFAULT_SS_ALPHA": 12.0,
+  "SS_RESCALE_RANGE": [
+   0.5,
+   2.0
+  ],
+  "DEFAULT_RESCALE_BUDGET_SECONDS": 20.0
+ },
+ "env": {
+  "python": "3.12.3",
+  "numpy": "2.4.4",
+  "opencv": "4.13.0",
+  "pillow": "12.1.1",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 1,
+  "machine": "x86_64"
+ }
+}

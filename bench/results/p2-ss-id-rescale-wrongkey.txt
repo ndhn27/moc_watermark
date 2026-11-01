@@ -1,0 +1,23 @@
+  ... pink image 1/5 done at 320x240
+  ... pink image 2/5 done at 320x240
+  ... pink image 3/5 done at 320x240
+  ... pink image 4/5 done at 320x240
+  ... pink image 5/5 done at 320x240
+  ... gradnoise image 1/5 done at 320x240
+  ... gradnoise image 2/5 done at 320x240
+  ... gradnoise image 3/5 done at 320x240
+  ... gradnoise image 4/5 done at 320x240
+  ... gradnoise image 5/5 done at 320x240
+
+== wrong keys on RESIZED marked images, 320x240, attacks ['resize_0.75', 'resize_1.25'], 5 wrong keys per image
+   ss_rescale     true-key control 15/20   wrong-key trials 100: true payload read 19 (19.0%, 95% CI 12.5%-27.8%), other text 0, nothing 81, budget hit 0
+   ss_id_rescale  true-key control 20/20   wrong-key trials 100: true payload read 23 (23.0%, 95% CI 15.8%-32.2%), other text 0, nothing 77, budget hit 0
+
+  ... pink image 1/2 done at 640x480
+  ... pink image 2/2 done at 640x480
+  ... gradnoise image 1/2 done at 640x480
+  ... gradnoise image 2/2 done at 640x480
+
+== wrong keys on RESIZED marked images, 640x480, attacks ['resize_0.75'], 4 wrong keys per image
+   ss_rescale     true-key control 4/4   wrong-key trials 16: true payload read 2 (12.5%, 95% CI 3.5%-36.0%), other text 0, nothing 14, budget hit 0
+   ss_id_rescale  true-key control 4/4   wrong-key trials 16: true payload read 3 (18.8%, 95% CI 6.6%-43.0%), other text 0, nothing 13, budget hit 0
